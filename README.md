@@ -1,4 +1,6 @@
 # vac_crackhouse
 FiveM Script
 
-Använd esx_teleports för att kunna gå in i huset
+Drag and drop
+
+start vac_crackhouse in your cfg file
