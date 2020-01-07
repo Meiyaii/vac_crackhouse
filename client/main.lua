@@ -17,6 +17,108 @@ local isInKokain = false
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
+-- Teleport in
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(5)
+
+		if paVag then
+			DisableControlAction(0, 38, true)
+		end
+	end
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(5)
+		if IsControlJustReleased(0, Keys['E']) and isOutSideHouse then
+			tpIn()
+		end
+	end
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(5)
+		local coords = GetEntityCoords(GetPlayerPed(-1))
+		isOutSideHouse = false
+		local currentZone = nil
+		for i=1, #Config.DoorOutSide, 1 do
+			if(GetDistanceBetweenCoords(coords, Config.DoorOutSide[i].x, Config.DoorOutSide[i].y, Config.DoorOutSide[i].z, true) < Config.DoorSize.x / 2) then
+				isOutSideHouse = true
+			end
+		end
+	end
+end)
+
+function tpIn()
+	paVag = true
+	TriggerEvent('vac_crackhouse:tpIn')
+end
+
+RegisterNetEvent('vac_crackhouse:tpIn')
+AddEventHandler('vac_crackhouse:tpIn', function()
+	while true do
+		Citizen.Wait(5)
+
+		ESX.ShowNotification('Du går in i huset.')
+		Citizen.Wait(3000)
+		DoScreenFadeOut(1000)
+		Citizen.Wait(2000)
+		SetEntityCoords(PlayerPedId(), 266.05, -1007.32, -102.01, 357.35)
+		DoScreenFadeIn(1000)
+		paVag = false
+		break
+	end
+end)
+
+-- Teleport Ut
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(5)
+		if IsControlJustReleased(0, Keys['E']) and isInSideHouse then
+			tpUt()
+		end
+	end
+end)
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(5)
+		local coords = GetEntityCoords(GetPlayerPed(-1))
+		isInSideHouse = false
+		local currentZone = nil
+		for i=1, #Config.DoorInSide, 1 do
+			if(GetDistanceBetweenCoords(coords, Config.DoorInSide[i].x, Config.DoorInSide[i].y, Config.DoorInSide[i].z, true) < Config.DoorSize.x / 2) then
+				isInSideHouse = true
+			end
+		end
+	end
+end)
+
+function tpUt()
+	paVag = true
+	TriggerEvent('vac_crackhouse:tpUt')
+end
+
+RegisterNetEvent('vac_crackhouse:tpUt')
+AddEventHandler('vac_crackhouse:tpUt', function()
+	while true do
+		Citizen.Wait(5)
+
+		ESX.ShowNotification('Du går ut ur huset.')
+		Citizen.Wait(3000)
+		DoScreenFadeOut(1000)
+		Citizen.Wait(2000)
+		SetEntityCoords(PlayerPedId(), 1200.92, -575.62, 69.14, 132.95)
+		DoScreenFadeIn(1000)
+		paVag = false
+		break
+	end
+end)
+
 -- Weed
 
 Citizen.CreateThread(function()
@@ -66,7 +168,7 @@ AddEventHandler('vac_crackhouse:smokesWeed', function()
 	 while smokesWeed do
 		Citizen.Wait(1)
 
-		TaskStartScenarioInPlace(playerPed, "WORLD_HUMAN_SMOKING", 0, 1)
+		TaskStartScenarioInPlace(playerPed, "WORLD_HUMAN_SMOKING_POT", 0, 1)
 		Citizen.Wait(Config.smokeTime)
 		TriggerServerEvent('vac_crackhouse:weedEffect')
 		ESX.ShowNotification('Du rökte nyss en joint')
@@ -125,7 +227,7 @@ AddEventHandler('vac_crackhouse:sniffKokain', function()
 	 while sniffarKokain do
 		Citizen.Wait(1)
 
-		TaskStartScenarioInPlace(playerPed, "WORLD_HUMAN_SMOKING", 0, 1)
+		TaskStartScenarioInPlace(playerPed, "WORLD_HUMAN_SMOKING_POT", 0, 1)
 		Citizen.Wait(Config.sniffTime)
 		TriggerServerEvent('vac_crackhouse:kokainEffect')
 		ESX.ShowNotification('Du sniffade nyss 1g kokain')
